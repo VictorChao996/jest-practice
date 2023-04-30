@@ -1,5 +1,5 @@
-const { test } = require("node:test");
-const { mockRecord, mockError } = require("../mockData");
+const { mockAdminRecordResponse, mockError } = require("../utils/mockData");
+const CODE = require("../utils/customStatusCode");
 const request = require("supertest");
 const app = require("../../app");
 require("dotenv").config();
@@ -11,7 +11,7 @@ describe(`GET ${apiEndpoint}`, () => {
     it("should response with a 200 and a list of winning record", async () => {
         let recordList;
         if (process.env.USE_MOCK_DATA) {
-            recordList = mockRecord;
+            recordList = mockAdminRecordResponse;
             console.log("using mock data");
         } else {
             const response = await request(app)
@@ -24,7 +24,7 @@ describe(`GET ${apiEndpoint}`, () => {
             recordList = response.body;
         }
 
-        expect(recordList).toHaveProperty("code", "000");
+        expect(recordList).toHaveProperty("code", CODE.success);
         expect(recordList).toHaveProperty("message", "取得獲獎紀錄");
         expect(recordList).toHaveProperty("data");
         expect(Array.isArray(recordList.data)).toBe(true);

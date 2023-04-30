@@ -1,5 +1,5 @@
-const { test } = require("node:test");
-const { mockLotteryList, mockError } = require("../mockData");
+const { mockAdminLotteryGetResponse, mockError } = require("../utils/mockData");
+const CODE = require("../utils/customStatusCode");
 const request = require("supertest");
 const app = require("../../app");
 require("dotenv").config();
@@ -11,7 +11,7 @@ describe(`GET ${apiEndpoint}`, () => {
     it("should response with a 200 and a list of lotteries", async () => {
         let lotteryList;
         if (process.env.USE_MOCK_DATA) {
-            lotteryList = mockLotteryList;
+            lotteryList = mockAdminLotteryGetResponse;
             console.log("using mock data");
         } else {
             const response = await request(app)
@@ -24,7 +24,7 @@ describe(`GET ${apiEndpoint}`, () => {
             lotteryList = response.body;
         }
 
-        expect(lotteryList).toHaveProperty("code", "000");
+        expect(lotteryList).toHaveProperty("code", CODE.success);
         expect(lotteryList).toHaveProperty("message", "取得成功");
         expect(lotteryList).toHaveProperty("data");
         expect(Array.isArray(lotteryList.data)).toBe(true);
