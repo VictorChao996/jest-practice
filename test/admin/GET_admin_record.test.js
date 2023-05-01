@@ -1,13 +1,22 @@
-const { mockAdminRecordResponse, mockError } = require("../utils/mockData");
+const {
+    mockAdminRecordResponse,
+    mockInputValueInvalidError,
+    mockError,
+} = require("../utils/mockData");
 const CODE = require("../utils/customStatusCode");
 const request = require("supertest");
 const app = require("../../app");
 require("dotenv").config();
 
 const apiEndpoint = "/api/v1/admin/record";
-const query = { id: 0, paging: 1, amount: 10 };
+let params = { id: "0", paging: 1, amount: 10 };
 
 describe(`GET ${apiEndpoint}`, () => {
+    beforeEach(() => {
+        params = { id: "0", paging: 1, amount: 10 };
+    });
+
+    //* 成功回覆後的內容檢查
     it("should response with a 200 and a list of winning record", async () => {
         let recordList;
         if (process.env.USE_MOCK_DATA) {
@@ -16,7 +25,7 @@ describe(`GET ${apiEndpoint}`, () => {
         } else {
             const response = await request(app)
                 .get(apiEndpoint)
-                .query(query)
+                .query(params)
                 .expect("Content-Type", /json/)
                 .expect(200);
             console.log("not using mock data");
@@ -48,18 +57,55 @@ describe(`GET ${apiEndpoint}`, () => {
         }
     });
 
-    // it("should response with 999 if there is an unknown error", async () => {
-    //     let error;
-    //     if (process.env.USE_MOCK_DATA) {
-    //         error = mockError;
-    //     } else {
-    //         const response = await request(app)
-    //             .get(apiEndpoint)
-    //             .query(query)
-    //             .expect("Content-Type", /json/)
-    //             .expect(999);
-    //         error = response.body;
-    //     }
-    //     expect(error).toHaveProperty("code", "999");
-    // });
+    //* id type 不正確的 response check
+    it("should return 200 and CODE 'inputValueInvalidError' if the type of id is not string", async () => {
+        let error;
+        params.id = 1;
+        if (process.env.USE_MOCK_DATA) {
+            error = mockInputValueInvalidError;
+        } else {
+            const response = await request(app)
+                .get(apiEndpoint)
+                .query(params)
+                .expect("Content-Type", /json/)
+                .expect(200);
+            error = response.body;
+        }
+
+        expect(error).toHaveProperty("code", CODE.inputValueInvalidError);
+    });
+    //* paging type 不正確的 response check
+    it("should return 200 and CODE 'inputValueInvalidError' if the type of paging is not number", async () => {
+        let error;
+        params.paging = "error type of paging";
+        if (process.env.USE_MOCK_DATA) {
+            error = mockInputValueInvalidError;
+        } else {
+            const response = await request(app)
+                .get(apiEndpoint)
+                .query(query)
+                .expect("Content-Type", /json/)
+                .expect(200);
+            error = response.body;
+        }
+
+        expect(error).toHaveProperty("code", CODE.inputValueInvalidError);
+    });
+    //* amount type 不正確的 response check
+    it("should return 200 and CODE 'inputValueInvalidError' if the type of amount is not number", async () => {
+        let error;
+        params.amount = "error type of amount";
+        if (process.env.USE_MOCK_DATA) {
+            error = mockInputValueInvalidError;
+        } else {
+            const response = await request(app)
+                .get(apiEndpoint)
+                .query(query)
+                .expect("Content-Type", /json/)
+                .expect(200);
+            error = response.body;
+        }
+
+        expect(error).toHaveProperty("code", CODE.inputValueInvalidError);
+    });
 });

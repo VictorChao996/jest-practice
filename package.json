@@ -4,7 +4,9 @@
   "description": "",
   "main": "sum.js",
   "scripts": {
-    "test": "jest"
+    "test": "jest",
+    "testwatch": "jest --watchAll",
+    "testcoverage": "jest --coverage"
   },
   "keywords": [],
   "author": "",

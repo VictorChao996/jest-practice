@@ -18,13 +18,15 @@ module.exports = {
     mockError: {
         code: CODE.unknownError,
     },
-    //TODO: 與後端確認錯誤代碼 (required query not provided)
     mockQueryRequiredError: {
         code: CODE.queryRequiredError,
     },
-    //TODO: 有待跟後端確認錯誤代碼 (invalid input value)
     mockInputValueInvalidError: {
         code: CODE.inputValueInvalidError,
+    },
+
+    mockAccessTokenError: {
+        code: CODE.accessTokenError,
     },
     mockAdminRecordResponse: {
         code: "000",
